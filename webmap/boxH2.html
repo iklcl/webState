@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>地图操作</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/index.css" rel="stylesheet">
+		<script src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+		<!-- map引入 -->
+		<script src='js/mapbox-gl_v0.54.0.js'></script>
+		<link href='css/mapbox-gl.css' rel='stylesheet' />
+		<script type="text/javascript" charset="UTF-8" src="js/FileSaver.js"></script>
+		<script src="js/mapboxgl-control-minimap.js"></script>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script src="js/mapbox-gl-draw.js"></script>
+		<script src="js/truf.min.js"></script>
+		<link rel="stylesheet" href="css/map.css" type='text/css' />
+		<link rel="stylesheet" href="css/mapbox-gl-draw.css">
+		<!-- map引入结束 -->
+		<style>
+
+		</style>
+	</head>
+	<body class="sidebar-collapse">
+		<div class="section">
+			<!-- 侧边栏 -->
+			<div class="sidebar">
+				<h4><i class="icon icon-map"></i></h4>
+				<ul class="navbar-side">
+					<li>
+						<a href="">
+							<i class="icon icon-barcd"></i>
+						</a>
+					</li>
+				</ul>
+				<div class="boxActive">
+					<div class="box" id="bigbox">
+						<div class="tab tab-pane-one active" id="one-pill">
+							<div class="layerBox">
+								<div>
+									<label><input type="checkbox" id="layerCheck1" class="layerCheck" onclick="layerCheck1OnClick()">
+										<i>✓</i>&nbsp;影像</label><br>
+
+								</div>
+								<div>
+									<label><input type="checkbox" id="layerCheck7" class="layerCheck" onclick="layerCheck7OnClick()" checked="checked">
+										<i>✓</i>&nbsp;行政区
+									</label><br>
+								</div>
+								<div>
+									<label><input type="checkbox" id="layerCheck4" class="layerCheck" onclick="layerCheck4OnClick()" checked="checked">
+										<i>✓</i>&nbsp;背景
+									</label><br>
+
+								</div>
+								<div>
+									<label><input type="checkbox" id="layerCheck2" class="layerCheck" onclick="layerCheck2OnClick()" checked="checked">
+										<i>✓</i>&nbsp;道路
+									</label><br>
+								</div>
+								<div>
+									<label><input type="checkbox" id="layerCheck5" class="layerCheck" onclick="layerCheck5OnClick()" checked="checked">
+										<i>✓</i>&nbsp;监测站
+									</label><br>
+
+								</div>
+								<div>
+									<label><input type="checkbox" id="layerCheck3" class="layerCheck" onclick="layerCheck3OnClick()" checked="checked">
+										<i>✓</i>&nbsp;建筑
+									</label><br>
+
+
+								</div>
+								<div>
+									<label><input type="checkbox" id="layerCheck6" class="layerCheck" onclick="layerCheck6OnClick()">
+										<i>✓</i>&nbsp;水扩散
+									</label><br>
+
+								</div>
+							</div>
+						</div>
+						<div class="tab tab-pane" id="two-pill">
+							<ul class="ul" id="ol">
+							</ul>
+							<input type="file" name="inputGeojson[]" id="inputGeojson" class="inputfile inputfile-1" data-multiple-caption="{count} files selected"
+							 multiple />
+							<label for="inputGeojson"><span style="display: block;color: #00A1CB;" class="icon icon-shch">上传</span></label>
+						</div>
+						<div class="tab tab-pane" id="three-pill">         
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 侧边栏 完-->
+			<!-- 主体部分  -->
+			<div class="main-map">
+				<div class="main-title">
+					<nav class="navbar navbar-default">
+						<div class="container-fluid">
+							<!-- Brand and toggle get grouped for better mobile display -->
+							<div class="navbar-header">
+								<a class="navbar-brand" href="javascript:;">&nbsp;&nbsp;</a>
+							</div>
+
+							<!-- Collect the nav links, forms, and other content for toggling -->
+							<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+								<ul class="nav navbar-nav " id="navbar-btn">
+									<li class="active"><a href="javascript:;">图层显示选择</a></li>
+									<li><a href="javascript:;">上传 </a></li>
+								</ul>
+								<ul class="nav navbar-nav ">
+									<li><a href="javascript:;" id="saveGeojson">保存到本地</a></li>
+
+								</ul>
+								<div class="col-xs-4 col-md-4  search ">
+									<div class="input-group">
+										<input type="text" id="searchName" class="form-control" placeholder="Search for...">
+										<span class="input-group-btn" id='btnSearch' onclick="search()">
+											<button class="btn btn-default" type="button">搜索</button>
+										</span>
+									</div>
+									<ul class="list-group" id='search-result'>
+									</ul>
+								</div>
+								<ul class="nav navbar-nav navbar-right">
+									<li><a href="javascript:;" onclick="printMap()">打印</a></li>
+									<li><a href="#">用户</a></li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">我的消息
+											<span class="caret"></span></a>
+										<ul class="dropdown-menu">
+											<li><a href="#">退出登录</a></li>
+											<li><a href="#">设置</a></li>
+										</ul>
+									</li>
+								</ul>
+							</div><!-- /.navbar-collapse -->
+						</div><!-- /.container-fluid -->
+					</nav>
+				</div>
+				<div class="mapBox">
+					<!-- 大理.html -->
+
+					<div id='map'>
+					</div>
+					<div class='calculation-box'>
+						<div id='calculated-area'></div>
+					</div>
+					<div class="input-group input-group-sm range-group">
+						<div id="bg" style="background: #fff;width: 30px; height: 110px; position: absolute;right: -91px;top:-50px;border:1px solid #797972 ;">
+						</div>
+						<span class="input-group-addon glyphicon glyphicon-minus zoom " id="addon1" onclick="changeValue(true)"></span>
+						<input type="range" id="silder" max="20" min="0" />
+						<span class="input-group-addon glyphicon glyphicon-plus zoom" id="addon2" onclick="changeValue(false)"></span>
+					</div>
+					<!-- 大理.html结束 -->
+				</div>
+
+			</div>
+
+
+		</div>
+
+		<!--主体部分 完-->
+		</div>
+
+		<style>
+		</style>
+		<script>
+			/* 侧边栏切换形态 */
+			$(".navbar-side a").click(function() {
+				$("body").toggleClass("sidebar-collapse");
+				if ($("body").hasClass("sidebar-collapse")) {
+					$(".sidebar > h4").html("<i class='icon icon-map'></i>");
+				} else {
+					$(".sidebar > h4").html("<i class='icon icon-map'></i>&ensp; 地图");
+				}
+				return false;
+			})
+
+
+
+
+			// 上传配置
+			var inputs = document.querySelectorAll('.inputfile');
+			Array.prototype.forEach.call(inputs, function(input) {
+				var label = input.nextElementSibling,
+					labelVal = label.innerHTML;
+				input.addEventListener('change', function(e) {
+					var fileName = '';
+					if (this.files.length > 0) {
+						fileName = (this.getAttribute('data-multiple-caption') || '').replace('{count}', this.files.length);
+						var ul = document.getElementById('ol');
+						ul.innerHTML = '';
+						for (var i = 0; i < this.files.length; i++) {
+							var details = ul.appendChild(document.createElement('li'));
+							details.innerHTML = this.files[i].name;
+						}
+					}
+					if (fileName)
+						label.querySelector('span').innerHTML = fileName;
+					else label.innerHTML = labelVal;
+				});
+			});
+
+			// 点击切换面板
+			window.onload = function() {
+				var ul = document.getElementById("navbar-btn")
+				var li = ul.getElementsByTagName("li")
+				var div = document.getElementById("bigbox")
+				var divchirld = div.getElementsByClassName('tab')
+				for (let i = 0; i < li.length; i++) {
+					li[i].onclick = function() {
+						if ($("body").hasClass("sidebar-collapse")) {
+							$(".navbar-side a").click();
+						}
+						for (j = 0; j < li.length; j++) {
+							li[j].className = ""
+							divchirld[j].style.display = "none";
+						}
+						this.className = "active"
+						divchirld[i].style.display = "block";
+					}
+				}
+			}
+		</script>
+		</script>
+		<script src="dist/map_dali.js"></script>
+		<script src="dist/getMapAttribution.js"></script>
+		<script src="dist/addControls.js"></script>
+		<script src="dist/draw.js"></script>
+		<script src="dist/animatedPoint.js"></script>
+		<script src="dist/LayerControl.js"></script>
+		<script src="dist/caseSelect.js"></script>
+		<script src="dist/search.js"></script>
+		<script src="dist/addLayer.js"></script>
+		<!-- <script src="dist/rightClick.js"></script> 添加到search.js-->
+	</body>
+	</body>
+</html>
